@@ -85,7 +85,12 @@ export async function POST(request: Request) {
 
   const pdfBuffer = await renderReportPdf({ name, company, role, report });
 
-  return new NextResponse(pdfBuffer, {
+  // Node's Buffer type (generic over ArrayBufferLike in recent @types/node)
+  // doesn't structurally satisfy the DOM BodyInit type that NextResponse
+  // expects, even though a Buffer is a valid body at runtime. Cast through
+  // unknown rather than fighting the generics — this is a type-level-only
+  // mismatch, not a real runtime issue.
+  return new NextResponse(pdfBuffer as unknown as BodyInit, {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="diagnostico-rh-${slugify(company || "empresa")}.pdf"`,
