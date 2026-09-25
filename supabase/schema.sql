@@ -17,6 +17,13 @@ create table if not exists public.diagnostic_results (
   company text not null,
   company_size text,
 
+  -- pre-quiz context answers (collected before the 20-question diagnostic)
+  context_role text,
+  context_stage text,
+  context_relationship text,
+  context_challenge text,
+  context_answers jsonb,
+
   -- raw answers: { [questionIndex: number]: 0 | 1 | 2 | 3 }
   answers jsonb not null,
 
@@ -38,3 +45,11 @@ create index if not exists diagnostic_results_company_idx
 -- bypasses RLS entirely. This just makes sure that stays true even if a
 -- client key is ever introduced later by mistake.
 alter table public.diagnostic_results enable row level security;
+
+-- If you already had this table from a previous version, run these too
+-- (safe to run even if the columns already exist):
+alter table public.diagnostic_results add column if not exists context_role text;
+alter table public.diagnostic_results add column if not exists context_stage text;
+alter table public.diagnostic_results add column if not exists context_relationship text;
+alter table public.diagnostic_results add column if not exists context_challenge text;
+alter table public.diagnostic_results add column if not exists context_answers jsonb;

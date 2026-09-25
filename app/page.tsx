@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Compass, TrendingUp, MessageCircle, Network, Sparkles } from "lucide-react";
 import { blocks } from "./data";
 
@@ -22,11 +21,8 @@ export default function Home() {
               <Link className="cta" href="/diagnostico">Fazer o diagnóstico gratuito <ArrowRight size={18} style={{marginLeft:8}} /></Link>
             </div>
             <div className="heroMeta">
-              <span>20 perguntas</span><span>·</span><span>~7 minutos</span><span>·</span><span>resultado imediato</span>
+              <span>25 perguntas</span><span>·</span><span>~7 minutos</span><span>·</span><span>resultado imediato</span>
             </div>
-          </div>
-          <div className="heroPortrait">
-            <Image src="/images/gabi/gabi-hero.jpg" alt="Gabrielle Botelho" width={420} height={420} priority />
           </div>
         </div>
       </section>

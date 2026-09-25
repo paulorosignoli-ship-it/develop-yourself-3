@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { buildReport, isComplete, type Answers } from "@/lib/scoring";
+import { isContextComplete, summarizeContext, type ContextAnswers } from "@/lib/context";
 import { getSupabaseClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
@@ -9,8 +10,8 @@ interface LeadPayload {
   email?: string;
   role?: string;
   company?: string;
-  size?: string;
   answers?: Answers;
+  context?: ContextAnswers;
 }
 
 function isValidEmail(email: string) {
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "JSON inválido." }, { status: 400 });
   }
 
-  const { name, email, role, company, size, answers } = body;
+  const { name, email, role, company, answers, context } = body;
 
   if (!name?.trim() || !email?.trim() || !role?.trim() || !company?.trim()) {
     return NextResponse.json(
@@ -49,7 +50,15 @@ export async function POST(request: Request) {
     );
   }
 
+  if (!context || !isContextComplete(context)) {
+    return NextResponse.json(
+      { error: "As 5 perguntas de contexto precisam estar respondidas." },
+      { status: 400 }
+    );
+  }
+
   const report = buildReport(answers);
+  const contextSummary = summarizeContext(context);
 
   let id: string | null = null;
 
@@ -63,7 +72,12 @@ export async function POST(request: Request) {
           email: email.trim().toLowerCase(),
           role: role.trim(),
           company: company.trim(),
-          company_size: size?.trim() || null,
+          company_size: contextSummary.size ?? null,
+          context_role: contextSummary.role ?? null,
+          context_stage: contextSummary.stage ?? null,
+          context_relationship: contextSummary.relationship ?? null,
+          context_challenge: contextSummary.challenge ?? null,
+          context_answers: context,
           answers,
           scores: report.scores,
           total: report.total,
@@ -90,5 +104,7 @@ export async function POST(request: Request) {
     percentages: report.percentages,
     profileId: report.profile.id,
     bottleneckKey: report.bottleneckKey,
+    context: contextSummary,
   });
 }
+

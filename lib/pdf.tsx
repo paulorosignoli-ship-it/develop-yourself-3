@@ -2,6 +2,7 @@ import "server-only";
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
 import type { BlockId } from "@/app/data";
 import type { DiagnosticReport } from "@/lib/scoring";
+import type { ContextSummary } from "@/lib/context";
 
 const COLORS = {
   navy: "#162332",
@@ -42,6 +43,17 @@ const styles = StyleSheet.create({
   focusItem: { flexDirection: "row", marginBottom: 6 },
   focusBullet: { width: 14, color: COLORS.accent, fontFamily: "Helvetica-Bold" },
   focusText: { flex: 1, lineHeight: 1.4 },
+  contextBox: {
+    marginTop: 22,
+    padding: 14,
+    backgroundColor: "#f7f5f0",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+  },
+  contextRow: { flexDirection: "row", marginBottom: 5 },
+  contextLabel: { width: 130, color: COLORS.muted, fontSize: 9.5, textTransform: "uppercase", letterSpacing: 0.5 },
+  contextValue: { flex: 1, fontSize: 10 },
   footer: {
     marginTop: 28,
     fontSize: 8.5,
@@ -58,10 +70,24 @@ export interface ReportPdfInput {
   company?: string;
   role?: string;
   report: DiagnosticReport;
+  context?: ContextSummary;
 }
 
-function ReportDocument({ name, company, role, report }: ReportPdfInput) {
+const CONTEXT_LABELS: Record<keyof ContextSummary, string> = {
+  role: "Papel",
+  stage: "Momento da empresa",
+  size: "Tamanho da empresa",
+  relationship: "RH x liderança",
+  challenge: "Principal desafio",
+};
+
+function ReportDocument({ name, company, role, report, context }: ReportPdfInput) {
   const identity = [name, role, company].filter(Boolean).join(" · ");
+  const contextEntries = context
+    ? (Object.keys(CONTEXT_LABELS) as (keyof ContextSummary)[])
+        .map((key) => [CONTEXT_LABELS[key], context[key]] as const)
+        .filter(([, value]) => Boolean(value))
+    : [];
 
   return (
     <Document title="Diagnóstico RH na Mesa do CEO">
@@ -69,6 +95,17 @@ function ReportDocument({ name, company, role, report }: ReportPdfInput) {
         <Text style={styles.brand}>DevelopYourself · RH na Mesa do CEO</Text>
         <Text style={styles.title}>Diagnóstico de Maturidade Estratégica do RH</Text>
         {identity ? <Text style={styles.subtitle}>{identity}</Text> : null}
+
+        {contextEntries.length > 0 && (
+          <View style={styles.contextBox}>
+            {contextEntries.map(([label, value]) => (
+              <View style={styles.contextRow} key={label}>
+                <Text style={styles.contextLabel}>{label}</Text>
+                <Text style={styles.contextValue}>{value}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         <View style={styles.scoreBox}>
           <Text style={styles.scoreLabel}>Seu estágio</Text>

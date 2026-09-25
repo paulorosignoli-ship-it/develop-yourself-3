@@ -1,5 +1,78 @@
 export type BlockId = "strategy" | "value" | "influence" | "organization" | "future";
 
+export const intro = {
+  eyebrow: "Antes de começar",
+  title: "7 minutos. 25 perguntas. Um retrato do seu RH.",
+  description:
+    "Você vai responder 5 perguntas rápidas sobre você e sua empresa, e depois passar pelos 5 blocos da jornada estratégica do RH. Para cada pergunta do diagnóstico, escolha o que realmente acontece hoje — não o que deveria acontecer num RH ideal.",
+  quote:
+    "Não existem respostas certas ou erradas. O valor do diagnóstico está na honestidade da resposta.",
+} as const;
+
+export const contextQuestions = [
+  {
+    id: 1,
+    key: "role",
+    text: "Qual é o seu papel na empresa?",
+    options: [
+      "Sou CEO / Fundador(a)",
+      "Sou C-Level (CFO, COO, CHRO etc.)",
+      "Sou líder de RH / People",
+      "Sou gestor(a) de outra área",
+      "Sou consultor(a) / profissional independente",
+      "Outro",
+    ],
+  },
+  {
+    id: 2,
+    key: "stage",
+    text: "Em que momento a empresa está hoje?",
+    options: [
+      "Estruturando a operação de RH do zero",
+      "Crescendo rapidamente e contratando muito",
+      "Reorganizando uma operação que cresceu sem estrutura",
+      "Passando por uma transformação importante (fusão, nova liderança, redesenho)",
+      "Buscando profissionalizar a gestão de pessoas",
+      "Com uma operação de RH madura, buscando evoluir",
+    ],
+  },
+  {
+    id: 3,
+    key: "size",
+    text: "Quantas pessoas trabalham aproximadamente na empresa?",
+    options: ["Até 49", "50–249", "250–999", "1.000–4.999", "5.000+"],
+  },
+  {
+    id: 4,
+    key: "relationship",
+    text: "Como você descreveria a relação entre RH e a liderança executiva hoje?",
+    options: [
+      "RH é acionado principalmente para tarefas operacionais",
+      "RH participa de algumas conversas, mas não tem lugar fixo",
+      "RH tem lugar à mesa em discussões importantes",
+      "RH é reconhecido como parceiro estratégico consistente",
+      "Não sei dizer",
+    ],
+  },
+  {
+    id: 5,
+    key: "challenge",
+    text: "Qual é o principal desafio do RH hoje?",
+    options: [
+      "Atrair e reter talentos",
+      "Provar o valor e o retorno das iniciativas de RH",
+      "Ganhar mais influência nas decisões de negócio",
+      "Desenvolver lideranças",
+      "Redesenhar o trabalho com IA e novas tecnologias",
+      "Estruturar processos básicos de RH",
+      "Conectar RH à estratégia do negócio",
+      "Outro",
+    ],
+  },
+] as const;
+
+export type ContextQuestionKey = (typeof contextQuestions)[number]["key"];
+
 export const blocks = {
   "strategy": {
     "label": "Estratégia",
